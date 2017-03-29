@@ -7,10 +7,10 @@ require 'fedora_downloader/datastreams/book_part'
 module FedoraDownloader
   class Book < Rubydora::DigitalObject
     def download(output_path)
-      FedoraDownloader::Logging.logger.info "PROCESSING BOOK: #{pid}"
+      FedoraDownloader.logger.info "PROCESSING BOOK: #{pid}"
       dir = find_or_create_output_path(output_path.chomp('/'))
       pages.each { |page| page.process_image(dir) }
-      FedoraDownloader::Logging.logger.info "COMPLETED PROCESSING BOOK: #{pid}"
+      FedoraDownloader.logger.info "COMPLETED PROCESSING BOOK: #{pid}"
     end
 
     private

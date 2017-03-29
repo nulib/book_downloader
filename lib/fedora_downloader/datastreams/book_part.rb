@@ -11,7 +11,7 @@ module FedoraDownloader
     end
 
     def process_image(dir)
-      FedoraDownloader::Logging.logger.info "DOWNLOADING PAGE: #{pid}"
+      FedoraDownloader.logger.info "DOWNLOADING PAGE: #{pid}"
       file_path = "#{dir}/#{File.basename(datastreams[ENV['DATASTREAM']].dsLocation)}"
       download(file_path) unless File.exist? file_path
       verify_image(file_path)
@@ -20,12 +20,12 @@ module FedoraDownloader
     private
 
     def verify_image(file_path)
-      FedoraDownloader::Logging.logger.error "FILE NOT FOUND: #{file_path}" unless File.file?(file_path)
+      FedoraDownloader.logger.error "FILE NOT FOUND: #{file_path}" unless File.file?(file_path)
       if File.zero?(file_path)
-        FedoraDownloader::Logging.logger.error "PROBLEM DOWNLOADING: #{pid}"
+        FedoraDownloader.logger.error "PROBLEM DOWNLOADING: #{pid}"
         FileUtils.rm_f(file_path)
       else
-        FedoraDownloader::Logging.logger.info "SUCCESSFULLY CREATED: #{file_path}"
+        FedoraDownloader.logger.info "SUCCESSFULLY CREATED: #{file_path}"
       end
     end
 

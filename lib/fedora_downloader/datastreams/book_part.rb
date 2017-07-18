@@ -1,6 +1,8 @@
 # frozen_string_literal: true
+
 require 'rubydora'
 require 'fileutils'
+require 'uri'
 
 module FedoraDownloader
   # Class for validating book parts and downloading
@@ -11,13 +13,24 @@ module FedoraDownloader
     end
 
     def process_image(dir)
-      FedoraDownloader.logger.info "DOWNLOADING PAGE: #{pid}"
-      file_path = "#{dir}/#{File.basename(datastreams[ENV['DATASTREAM']].dsLocation)}"
-      download(file_path) unless File.exist? file_path
-      verify_image(file_path)
+      download_path = make_subdirectory(dir)
+      if File.exist?(download_path)
+        FedoraDownloader.logger.info("#{download_path} already exists")
+      else
+        download(download_path)
+      end
+      verify_image(download_path)
     end
 
     private
+
+    def make_subdirectory(dir)
+      url = datastreams[ENV['DATASTREAM']].dsLocation
+      base_path = URI.parse(url).path
+      base_dir = File.dirname(base_path)
+      download_dir = FileUtils.mkdir_p("#{dir}#{base_dir}").first
+      "#{download_dir}/#{File.basename(base_path)}"
+    end
 
     def verify_image(file_path)
       FedoraDownloader.logger.error "FILE NOT FOUND: #{file_path}" unless File.file?(file_path)
